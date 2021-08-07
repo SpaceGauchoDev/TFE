@@ -84,6 +84,12 @@
       color: #000;
       margin-bottom: 0; 
   }
+
+  .login-wrapper-footer-text-error {
+    font-size: 24px;
+    color: rgb(182, 28, 28);
+    margin-bottom: 0; 
+}
   
   .login-title {
       font-size: 30px;

@@ -13,31 +13,23 @@ import "@fontsource/karla";
 import "@fontsource/montecarlo"; 
 
 // my stuffs
-import store from './store/store';
-import Login from './components/pages/login';
+import Store from './store/store';
+import Login from './components/pages/login/login';
+import Register from './components/pages/register/register';
+import Dashboard from './components/pages/dashboard/dashboard';
 
 const App = () => {
   return (
-    <Login />
-  );
-}
-
-/*
-const App = () => {
-  return (
-    <Provider store={store}>
+    <Provider store={Store}>
       <Router>
-        <Menu />
-        <hr />
         <Switch>
           <Route exact path="/" component={Login} />
-          <Route path="/registro" component={Registro} />
-          <Route path="/principal" component={Principal} />
-          <Route component={NoEncontrado} />
+          <Route path="/register" component={Register} />
+          <Route path="/dashboard" component={Dashboard} />
         </Switch>
       </Router>
-    </Provider>
+    </Provider>    
   );
 }
-*/
+
 export default App;
