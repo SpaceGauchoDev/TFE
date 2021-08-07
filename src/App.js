@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+// framework
+import { Provider } from "react-redux";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-function App() {
+// styles
+import './styles.css'; // imports styles and fonts
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// fonts
+// to install more fonts: npm install @fontsource/NAME_OF_FONT
+// find fonts here: https://fonts.google.com/
+import "@fontsource/karla"; 
+import "@fontsource/montecarlo"; 
+
+// my stuffs
+import store from './store/store';
+import Login from './components/pages/login';
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Login />
   );
 }
 
+/*
+const App = () => {
+  return (
+    <Provider store={store}>
+      <Router>
+        <Menu />
+        <hr />
+        <Switch>
+          <Route exact path="/" component={Login} />
+          <Route path="/registro" component={Registro} />
+          <Route path="/principal" component={Principal} />
+          <Route component={NoEncontrado} />
+        </Switch>
+      </Router>
+    </Provider>
+  );
+}
+*/
 export default App;
