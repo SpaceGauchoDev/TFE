@@ -14,9 +14,9 @@ import "@fontsource/montecarlo";
 
 // my stuffs
 import Store from './store/store';
-import Login from './components/pages/login/login';
-import Register from './components/pages/register/register';
-import Dashboard from './components/pages/dashboard/dashboard';
+import Login from './components/login/login';
+import Register from './components/register/register';
+import Dashboard from './components/dashboard/dashboard';
 
 const App = () => {
   return (

@@ -1,8 +1,6 @@
 const initialState = {
     basePageName: "Travel App - ",
-    apiKey: null,
-    userId: null,
-    logged: false
+    sessionUserData: {logged: false, apiKey: null, userId: null }
 }
 
 export default initialState;

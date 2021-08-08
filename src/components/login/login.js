@@ -42,15 +42,21 @@ const Login = () => {
     }
 
     const logInSuccess = (responseTwo) => {
-        console.log(responseTwo);
+        //console.log(responseTwo);
         dispatch({ type: "LOG_IN", payload: {apiKey: responseTwo.apiKey, id: responseTwo.id} });
         history.push("/dashboard");
     }
 
-    const logInError = responseError => {
+    const logInError = (responseError) => {
         // TODO more detailed error messages
         console.log(responseError);
         setLoginError(true);
+    }
+
+    const handleKeyDown = e => {
+        if (e.key === 'Enter') {
+            logInAttempt();
+        }
     }
 
     return (
@@ -67,10 +73,10 @@ const Login = () => {
                         
                         <div className="form-group mb-4">
                             <label htmlFor="password">Password</label>
-                            <input type="password" name="password" className="form-control" placeholder="enter your passsword" ref={passInput}/>
+                            <input type="password" name="password" className="form-control" placeholder="enter your passsword" ref={passInput} onKeyDown={handleKeyDown}/>
                         </div>
 
-                        <input name="login" id="login" className="btn btn-block login-btn" type="button" value="Login" onClick={logInAttempt} />
+                        <input name="login" className="btn btn-block login-btn" type="button" value="Login" onClick={logInAttempt} />
 
                         {loginError && <p className="login-wrapper-footer-text-error">Username or password incorrect.</p>}
 

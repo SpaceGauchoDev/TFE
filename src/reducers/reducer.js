@@ -3,11 +3,14 @@ import initialState from "../store/initialState";
 const reducer = (state = initialState, action) => {
     //console.log(state, action);
     switch (action.type) {
-        case "LOG_IN":
-            return { ...state, logged: true, apiKey: action.payload.apiKey, userId:action.payload.apiKey.id };
-        case "REGISTER":
-            return { ...state, logged: true, apiKey: action.payload.apiKey, userId:action.payload.apiKey.id };
-    
+        case "LOG_IN": {
+                const  newSessionUserData = {logged: true, apiKey: action.payload.apiKey, userId: action.payload.id };
+                return { ...state, sessionUserData: newSessionUserData };
+            }
+        case "REGISTER": {
+                const newSessionUserData = {logged: true, apiKey: action.payload.apiKey, userId: action.payload.id };
+                return { ...state, sessionUserData: newSessionUserData };
+            }
         /*
         case "PRUEBA":
             return { ...state, contador: state.contador + 1 };
