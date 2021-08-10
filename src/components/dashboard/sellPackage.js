@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useDispatch} from 'react-redux'
+import { useEffect, useState } from 'react';
+import { useDispatch} from 'react-redux';
 
 import PackageOption from './packageOption';
 import ValidatedTextInput from './validatedTextInput';
@@ -102,7 +102,6 @@ const SellPackage = ({apiKey, userId}) => {
         })
             .then(responseOne => responseOne.json())
                 .then(responseTwo => {
-                    console.log(responseTwo.ventas);
                     dispatch({ type: "NUMBER_OF_SALES_UPDATE", payload: {sales:  responseTwo.ventas.length} });
                     dispatch({ type: "SALES_UPDATE", payload: responseTwo.ventas });
                 })
@@ -144,7 +143,19 @@ const SellPackage = ({apiKey, userId}) => {
         getSelectorItems();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+    const handleKeyDown = e => {
+        if (e.key === 'Enter') {
+            if(validClientName &&
+                validAdultsNumber &&
+                validMinorsNumber &&
+                selectorItemsRecieved){
+                    saleAttempt();
+                }
+        }
+    }
 
+    // TODO: Make package select into a component
+    // TODO: Make better validTotalPeopleNumber warning
     return (
         <div>
             <ValidatedTextInput {...nameField}/>
@@ -153,14 +164,20 @@ const SellPackage = ({apiKey, userId}) => {
             <div className="form-group">
                 <label htmlFor="salePackageTypeInput">Package: </label>
                 <br/>
-                <select name="salePackageTypeInput" value={currentSelectorValue} onChange={selectionChanged}>
+                <select name="salePackageTypeInput" value={currentSelectorValue} onChange={selectionChanged} onKeyDown={handleKeyDown}>
                     {selectorItems.map(packageOption => <PackageOption key={packageOption.id} {...packageOption}/>)}
                 </select>
             </div>
-            <input name="sale" className="btn btn-block login-btn" type="button" value="Sell Package" onClick={saleAttempt} disabled={ !(   validClientName && 
-                                                                                                                                            validAdultsNumber && 
-                                                                                                                                            validMinorsNumber && 
-                                                                                                                                            selectorItemsRecieved)}/>
+            <input  name="sale" 
+                    className="btn btn-block login-btn" 
+                    type="button" 
+                    value="Sell Package" 
+                    onKeyDown={handleKeyDown} 
+                    onClick={saleAttempt} 
+                    disabled={ !(   validClientName && 
+                                    validAdultsNumber && 
+                                    validMinorsNumber &&
+                                    selectorItemsRecieved)}/>
             {!validTotalPeopleNumber && <p>Total number of passengers can't be higher than 10</p>}
         </div>
     );

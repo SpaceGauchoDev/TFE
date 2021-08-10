@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react'
-import { useSelector} from 'react-redux'
-import Package from "./package";
+// framework
+import { useEffect, useState } from 'react';
+import { useSelector} from 'react-redux';
+
+// my stuffs
+import PackageSoldByUser from "./packageSoldByUser";
 
 const PackagesSoldByUser = () => {
     /*
@@ -55,7 +58,8 @@ const PackagesSoldByUser = () => {
 
     return (
         <div>
-            {packagesArray!== null && packagesArray.map(p => <Package key={p.listId} {...p}/>)}
+            <h2>All packages sold: </h2>
+            {packagesArray!== null && packagesArray.map(p => <PackageSoldByUser key={p.listId} {...p}/>)}
         </div>
     )
 }

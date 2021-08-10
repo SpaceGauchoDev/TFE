@@ -1,4 +1,4 @@
-const Package = ({clientName, packageName, adultsNumber, minorsNumber, finalPrice}) => {
+const PackageSoldByUser = ({clientName, packageName, adultsNumber, minorsNumber, finalPrice}) => {
     return (
         <div>
             <p>Client: {clientName}</p>
@@ -6,9 +6,8 @@ const Package = ({clientName, packageName, adultsNumber, minorsNumber, finalPric
             <p>Adults: {adultsNumber}</p>
             <p>Minors: {minorsNumber}</p>
             <p>Price: {finalPrice}</p>
-            <hr/>
         </div>
     )
 }
 
-export default Package
+export default PackageSoldByUser

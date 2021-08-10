@@ -1,11 +1,15 @@
+// framework
+import { useEffect } from 'react';
+import { useSelector, useDispatch} from 'react-redux';
+import { Redirect } from 'react-router-dom';
+
+// my stuffs
 import "./dashboard.css";
 import SellPackage from "./sellPackage";
 import NumberOfPackagesSoldByUser from "./numberOfPackagesSoldByUser";
 import PackagesSoldByUser from "./packagesSoldByUser";
-
-import { useEffect } from 'react'
-import { useSelector, useDispatch} from 'react-redux'
-import { Redirect } from 'react-router-dom';
+import PackagesMostSoldByUser from "./packagesMostSoldByUser";
+import PackagesNotYetSoldByUser from "./packagesNotYetSoldByUser";
 
 const Dashboard = () => {
     const sessionData = useSelector(state => state.sessionUserData);
@@ -52,8 +56,10 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        updatePagackesSold();
-        updatePagackesInfo();
+        if(sessionData !== null && sessionData.logged){
+            updatePagackesSold();
+            updatePagackesInfo();
+        }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // kick user if not logged
@@ -68,6 +74,10 @@ const Dashboard = () => {
             <NumberOfPackagesSoldByUser />
             <hr/>
             <PackagesSoldByUser />
+            <hr/>
+            <PackagesMostSoldByUser />
+            <hr/>
+            <PackagesNotYetSoldByUser />
         </div>
     )
 }
