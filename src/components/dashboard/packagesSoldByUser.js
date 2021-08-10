@@ -37,7 +37,7 @@ const PackagesSoldByUser = () => {
                                         adultsNumber: p.cantidad_mayores,
                                         minorsNumber: p.cantidad_menores,
                                         finalPrice: price
-                    }
+                    };
                     newPackagesArray = [...newPackagesArray, newPackage];
                 }else{
                     console.log("PACKAGE WITH INVALID ID FOUND AT @ updatePackagesArray");

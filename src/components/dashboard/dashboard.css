@@ -1,0 +1,5 @@
+.graphs-wrapper {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+}

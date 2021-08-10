@@ -10,6 +10,8 @@ import NumberOfPackagesSoldByUser from "./numberOfPackagesSoldByUser";
 import PackagesSoldByUser from "./packagesSoldByUser";
 import PackagesMostSoldByUser from "./packagesMostSoldByUser";
 import PackagesNotYetSoldByUser from "./packagesNotYetSoldByUser";
+import AveragePricePerPackage from './averagePricePerPackage';
+import TravelersPerDestination from './travelersPerDestination';
 
 const Dashboard = () => {
     const sessionData = useSelector(state => state.sessionUserData);
@@ -78,6 +80,11 @@ const Dashboard = () => {
             <PackagesMostSoldByUser />
             <hr/>
             <PackagesNotYetSoldByUser />
+            <hr/>
+            <div className="graphs-wrapper">
+                <AveragePricePerPackage />
+                <TravelersPerDestination />
+            </div>
         </div>
     )
 }
