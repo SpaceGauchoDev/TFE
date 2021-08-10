@@ -37,20 +37,16 @@ const Login = () => {
                     logInSuccess(responseTwo);
                 })
             .catch(err => {
-                logInError(err);
+                // TODO: more detailed error messages
+                console.log("FETCH ERROR @ logInAttempt");
+                console.log(err);
+                setLoginError(true);
             });
     }
 
     const logInSuccess = (responseTwo) => {
-        //console.log(responseTwo);
         dispatch({ type: "LOG_IN", payload: {apiKey: responseTwo.apiKey, id: responseTwo.id} });
         history.push("/dashboard");
-    }
-
-    const logInError = (responseError) => {
-        // TODO more detailed error messages
-        console.log(responseError);
-        setLoginError(true);
     }
 
     const handleKeyDown = e => {
@@ -90,10 +86,3 @@ const Login = () => {
 }
 
 export default Login
-
-/*
-import bg from './bg.jpg';
-<div className="col-sm-6 px-0 d-none d-sm-block">
-    <img className="bg-img" src={bg} alt="Background" />
-</div>
-*/

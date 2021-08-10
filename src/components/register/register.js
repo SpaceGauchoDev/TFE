@@ -46,21 +46,17 @@ const Register = () => {
                         registerSuccess(responseTwo);
                     })
                 .catch(err => {
-                    registerError(err);
+                    // TODO: more detailed error messages
+                    console.log("FETCH ERROR @ registerAttempt");
+                    console.log(err);
+                    setHasRegisterError(true);
                 });
         }
     }
 
     const registerSuccess = (responseTwo) => {
-        console.log(responseTwo);
         dispatch({ type: "REGISTER", payload: {apiKey: responseTwo.apiKey, id: responseTwo.id} });
         history.push("/dashboard");
-    }
-
-    const registerError = (responseError) => {
-        // TODO more detailed error messages
-        console.log(responseError);
-        setHasRegisterError(true);
     }
 
     const handleKeyDown = e => {

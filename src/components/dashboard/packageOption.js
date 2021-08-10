@@ -1,4 +1,4 @@
-const PackageOption = ({id, nombre, imagen}) => {
+const PackageOption = ({id, nombre}) => {
     return (
         <option value={id}>{nombre}</option>
     )

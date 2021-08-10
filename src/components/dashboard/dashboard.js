@@ -1,8 +1,8 @@
 import "./dashboard.css";
 import SellPackage from "./sellPackage";
+import NumberOfPackagesSoldByUser from "./numberOfPackagesSoldByUser";
 
-import { useRef, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector} from 'react-redux'
 import { Redirect } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -17,11 +17,11 @@ const Dashboard = () => {
             <hr/>
             <SellPackage {...sessionData}/>
             <hr/>
+            <NumberOfPackagesSoldByUser {...sessionData}/>
+            <hr/>
         </div>
     )
 }
 
 
 export default Dashboard
-
-//<input type="select" name="salePackageTypeInput" className="form-control" placeholder="Bahamas" ref={salePackageTypeInput}/>

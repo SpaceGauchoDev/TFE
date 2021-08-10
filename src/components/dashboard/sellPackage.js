@@ -1,51 +1,62 @@
-import { useRef, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useDispatch} from 'react-redux'
 
 import PackageOption from './packageOption';
+import ValidatedTextInput from './validatedTextInput';
+import ValidatedNumberInput from './validatedNumberInput';
 
-
-const SellPackage = ({logged, apiKey, userId}) => {
-    const saleClientNameInput = useRef(null);
-    const saleAdultsNumberInput = useRef(null);
-    const saleMinorsNumberInput = useRef(null);
-
-    const [selectorItems, setSelectorItems] = useState([{id: 0, nombre: "placeholderName", foto:"placeholderPicture.jpg"}, {id: 1, nombre: "placeholderToo", foto:"placeholderPictureToo.jpg"}]);
-    const [currentSelectorValue, setCurrentSelectorValue] = useState(selectorItems[0].id);
-  
+const SellPackage = ({apiKey, userId}) => {
+    // inicial setup
+    const [selectorItems, setSelectorItems] = useState([{id: 1, nombre: "placeholderName", foto:"placeholderPicture.jpg"}]);
     const [selectorItemsRecieved, setSelectorItemsRecieved] = useState(false);
+
+    // User input data
+    const [currentSelectorValue, setCurrentSelectorValue] = useState(selectorItems[0].id);
+    const [clientNameValue, setClientNameValue] = useState(null);
+    const [adultsNumberValue, setAdultsNumberValue] = useState(null);
+    const [minorsNumberValue, setMinorsNumberValue] = useState(null);
+    
+    // Used for validation
     const [validClientName, setValidClientName] = useState(false);
     const [validAdultsNumber, setValidAdultsNumber] = useState(false);
     const [validMinorsNumber, setValidMinorsNumber] = useState(false);
+    const [validTotalPeopleNumber, setValidTotalPeopleNumber] = useState(true);
 
-    const validateAdults = () => {
-        let adultsNumber = saleAdultsNumberInput.current.value;
-        if (isNaN(adultsNumber) ||  adultsNumber <= 0){
-            setValidAdultsNumber(false);
-            return;
-        }
-        setValidAdultsNumber(true);
-    }
+    // Misc
+    const dispatch = useDispatch();
 
-    const validateMinors = () => {
-        let minorsNumber = saleMinorsNumberInput.current.value;
-        if (isNaN(minorsNumber) ||  minorsNumber < 0){
-            setValidMinorsNumber(false);
-            return;
-        }
-        setValidMinorsNumber(true);
-    }
-    
-    const validateClientName = () => {
-        let clientName = saleClientNameInput.current.value;
-        if(!clientName || clientName.length === 0){
-            setValidClientName(false);
-            return;
-        }
-        console.log("valid client name");
-        setValidClientName(true);
-    }
+    // Input fields prop objects
+    const nameField = { uniqueId: 1, 
+        invalidWarningText: "Required field", 
+        labelText: "Name: ", 
+        placeholderText: "John Smith", 
+        validStateSetter: setValidClientName,
+        outValueSetter: setClientNameValue}
 
-    const saleAttempt = e => {
+    const adultsField = {   uniqueId: 1, 
+        invalidWarningText: "Required field, must be a number equal or higher than 1", 
+        labelText: "Adults: ", 
+        placeholderText: "1", 
+        inclusiveMin: 1, 
+        validStateSetter: setValidAdultsNumber, 
+        outValueSetter: setAdultsNumberValue}
+
+    const minorsField = {   uniqueId: 2, 
+        invalidWarningText: "Required field, must be a number equal or higher than 0", 
+        labelText: "Minors: ", 
+        placeholderText: "0", 
+        inclusiveMin: 0, 
+        validStateSetter: setValidMinorsNumber, 
+        outValueSetter: setMinorsNumberValue} 
+
+
+    const saleAttempt = () => {
+        // TODO: validate total people number before a sale is attempted
+        if(adultsNumberValue + minorsNumberValue > 10){
+            setValidTotalPeopleNumber(false);
+            return;
+        }            
+
         fetch("https://destinos.develotion.com/ventas.php", {
             "method": "POST",
             "headers": {
@@ -54,21 +65,52 @@ const SellPackage = ({logged, apiKey, userId}) => {
             },
             "body": JSON.stringify({
                 "idVendedor": userId,
-                "nombreCliente": saleClientNameInput.current.value,
+                "nombreCliente": clientNameValue,
                 "idPaquete": currentSelectorValue,
-                "cantidadMayores": saleAdultsNumberInput.current.value,
-                "cantidadMenores": saleMinorsNumberInput.current.value
+                "cantidadMayores": adultsNumberValue,
+                "cantidadMenores": minorsNumberValue
             })
         })
             .then(responseOne => responseOne.json())
             .then(responseTwo => {
-                console.log(responseTwo);
+                updatePagackesSold();
+                resetForm();
             })
             .catch(err => {
+                console.log("FETCH ERROR @ saleAttempt");
                 console.log(err);
             });
     };
 
+    const resetForm = () => {
+        // TODO: reset clientNameValue, currentSelectorValue, adultsNumberValue, minorsNumberValue input fields
+        setValidTotalPeopleNumber(true);
+    }
+    
+    // After sale we should update the locally stored data
+    const updatePagackesSold = () => {
+        let ventasUrl = "https://destinos.develotion.com/ventas.php?";
+        ventasUrl += "idVendedor=" + userId;
+
+        fetch(ventasUrl, {
+            "method": "GET",
+            "headers": {
+                "apikey": apiKey,
+                "content-type": "application/json"
+                }
+        })
+            .then(responseOne => responseOne.json())
+                .then(responseTwo => {
+                    dispatch({ type: "NUMBER_OF_SALES_UPDATE", payload: {sales:  responseTwo.ventas.length} });
+                    dispatch({ type: "SALES_UPDATE", payload: responseTwo.ventas });
+                })
+            .catch(err => {
+                console.log("FETCH ERROR @ updatePagackesSold");
+                console.log(err);
+            });
+    }    
+
+    // Selector managment
     const selectionChanged = e => {
         setCurrentSelectorValue(e.target.value);
         console.log("selection changed");
@@ -84,36 +126,29 @@ const SellPackage = ({logged, apiKey, userId}) => {
             })
             .then(responseOne => responseOne.json())
                 .then(responseTwo => {
-                    console.log(responseTwo);
                     setSelectorItems (responseTwo.destinos);
+                    setCurrentSelectorValue(selectorItems[0].id);
                     setSelectorItemsRecieved(true);
                 })
             .catch(err => {
+                console.log("FETCH ERROR @ getSelectorItems");
                 console.log(err);
             });
     };
 
+    // TODO: this generates a warning, clean it up if possible
+    // React Hook useEffect has a missing dependency: 'getSelectorItems'. 
+    // Either include it or remove the dependency array  react-hooks/exhaustive-deps
+    // Research: useCallback
     useEffect(() => {
         getSelectorItems();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div>
-            <div className="form-group">
-                <label htmlFor="saleClientName">Name: </label>
-                <input type="text" name="saleClientName" className="form-control" placeholder="Messi" ref={saleClientNameInput} onChange={validateClientName}/>
-                {!validClientName && <p>Name can't be empty.</p>}
-            </div>
-            <div className="form-group">
-                <label htmlFor="saleAdultsNumber">Adults: </label>
-                <input type="text" name="saleAdultsNumber" className="form-control" placeholder="1" ref={saleAdultsNumberInput} onChange={validateAdults}/>
-                {!validAdultsNumber && <p>Adults must be a number equal or higher than 1.</p>}
-            </div>
-            <div className="form-group">
-                <label htmlFor="saleMinorsNumber">Children: </label>
-                <input type="text" name="saleMinorsNumber" className="form-control" placeholder="0" ref={saleMinorsNumberInput} onChange={validateMinors}/>
-                {!validMinorsNumber && <p>Children must be a number equal or higher than 0.</p>}
-            </div>            
+            <ValidatedTextInput {...nameField}/>
+            <ValidatedNumberInput {...adultsField}/>
+            <ValidatedNumberInput {...minorsField}/>
             <div className="form-group">
                 <label htmlFor="salePackageTypeInput">Package: </label>
                 <br/>
@@ -121,7 +156,11 @@ const SellPackage = ({logged, apiKey, userId}) => {
                     {selectorItems.map(packageOption => <PackageOption key={packageOption.id} {...packageOption}/>)}
                 </select>
             </div>
-            <input name="sale" className="btn btn-block login-btn" type="button" value="Sell Package" onClick={saleAttempt} disabled={ !(validClientName && validAdultsNumber && validMinorsNumber && selectorItemsRecieved)}/>
+            <input name="sale" className="btn btn-block login-btn" type="button" value="Sell Package" onClick={saleAttempt} disabled={ !(   validClientName && 
+                                                                                                                                            validAdultsNumber && 
+                                                                                                                                            validMinorsNumber && 
+                                                                                                                                            selectorItemsRecieved)}/>
+            {!validTotalPeopleNumber && <p>Total number of passengers can't be higher than 10</p>}
         </div>
     );
 };

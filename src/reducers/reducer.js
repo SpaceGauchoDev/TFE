@@ -11,6 +11,13 @@ const reducer = (state = initialState, action) => {
                 const newSessionUserData = {logged: true, apiKey: action.payload.apiKey, userId: action.payload.id };
                 return { ...state, sessionUserData: newSessionUserData };
             }
+        case "NUMBER_OF_SALES_UPDATE": {
+            return { ...state, numberOfUserSales: action.payload.sales };
+        }
+        case "SALES_UPDATE": {
+            return { ...state, userSales: action.payload };
+        }        
+        
         /*
         case "PRUEBA":
             return { ...state, contador: state.contador + 1 };
