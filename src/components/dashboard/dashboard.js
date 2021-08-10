@@ -1,12 +1,60 @@
 import "./dashboard.css";
 import SellPackage from "./sellPackage";
 import NumberOfPackagesSoldByUser from "./numberOfPackagesSoldByUser";
+import PackagesSoldByUser from "./packagesSoldByUser";
 
-import { useSelector} from 'react-redux'
+import { useEffect } from 'react'
+import { useSelector, useDispatch} from 'react-redux'
 import { Redirect } from 'react-router-dom';
 
 const Dashboard = () => {
     const sessionData = useSelector(state => state.sessionUserData);
+    const dispatch = useDispatch();
+
+    const updatePagackesSold = () => {
+        let ventasUrl = "https://destinos.develotion.com/ventas.php?";
+        ventasUrl += "idVendedor=" + sessionData.userId;
+
+        fetch(ventasUrl, {
+            "method": "GET",
+            "headers": {
+                "apikey": sessionData.apiKey,
+                "content-type": "application/json"
+                }
+        })
+            .then(responseOne => responseOne.json())
+                .then(responseTwo => {
+                    dispatch({ type: "NUMBER_OF_SALES_UPDATE", payload: {sales:  responseTwo.ventas.length} });
+                    dispatch({ type: "SALES_UPDATE", payload: responseTwo.ventas });
+                })
+            .catch(err => {
+                console.log("FETCH ERROR @ updatePagackesSold");
+                console.log(err);
+            });
+    }
+
+    const updatePagackesInfo = () => {
+        fetch("https://destinos.develotion.com/paquetes.php", {
+            "method": "GET",
+            "headers": {
+                "apikey": sessionData.apiKey,
+                "content-type": "application/json"
+                }
+            })
+            .then(responseOne => responseOne.json())
+                .then(responseTwo => {
+                    dispatch({ type: "PACKAGES_INFO_UPDATE", payload: responseTwo.destinos });
+                })
+            .catch(err => {
+                console.log("FETCH ERROR @ updatePagackesInfo");
+                console.log(err);
+            });
+    }
+
+    useEffect(() => {
+        updatePagackesSold();
+        updatePagackesInfo();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // kick user if not logged
     if(!sessionData.logged){
@@ -17,8 +65,9 @@ const Dashboard = () => {
             <hr/>
             <SellPackage {...sessionData}/>
             <hr/>
-            <NumberOfPackagesSoldByUser {...sessionData}/>
+            <NumberOfPackagesSoldByUser />
             <hr/>
+            <PackagesSoldByUser />
         </div>
     )
 }

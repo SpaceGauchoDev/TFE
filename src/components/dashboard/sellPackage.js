@@ -7,6 +7,7 @@ import ValidatedNumberInput from './validatedNumberInput';
 
 const SellPackage = ({apiKey, userId}) => {
     // inicial setup
+    // these "selector" vars have nothing to do with useSepector hook and everything to do with poor naming
     const [selectorItems, setSelectorItems] = useState([{id: 1, nombre: "placeholderName", foto:"placeholderPicture.jpg"}]);
     const [selectorItemsRecieved, setSelectorItemsRecieved] = useState(false);
 
@@ -101,6 +102,7 @@ const SellPackage = ({apiKey, userId}) => {
         })
             .then(responseOne => responseOne.json())
                 .then(responseTwo => {
+                    console.log(responseTwo.ventas);
                     dispatch({ type: "NUMBER_OF_SALES_UPDATE", payload: {sales:  responseTwo.ventas.length} });
                     dispatch({ type: "SALES_UPDATE", payload: responseTwo.ventas });
                 })
@@ -116,6 +118,8 @@ const SellPackage = ({apiKey, userId}) => {
         console.log("selection changed");
     };
 
+    //  TODO: we already have this info by this point, consider removing this redundant 
+    //  fetch and use packagesInfo saved at the store
     const getSelectorItems = () => {
         fetch("https://destinos.develotion.com/paquetes.php", {
             "method": "GET",
@@ -136,13 +140,10 @@ const SellPackage = ({apiKey, userId}) => {
             });
     };
 
-    // TODO: this generates a warning, clean it up if possible
-    // React Hook useEffect has a missing dependency: 'getSelectorItems'. 
-    // Either include it or remove the dependency array  react-hooks/exhaustive-deps
-    // Research: useCallback
     useEffect(() => {
         getSelectorItems();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 
     return (
         <div>
